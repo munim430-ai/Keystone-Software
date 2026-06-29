@@ -20,33 +20,53 @@ export default function AnimatedHeading({
     return () => clearTimeout(timer);
   }, [delay]);
 
-  const lines = text.split('\n');
-  let charIndexGlobal = 0;
+  // Support both real newlines (from {`...`}) and literal \n (from "...")
+  const lines = text.split(/\n|\\n/);
+  let globalCharIndex = 0;
 
   return (
     <div className={className}>
       {lines.map((line, lineIndex) => {
-        const chars = line.split('');
+        const words = line.split(' ');
         return (
-          <div key={lineIndex} className="block">
-            {chars.map((char, charIndex) => {
-              charIndexGlobal++;
-              const stagger =
-                lineIndex * chars.length * charDelay + charIndex * charDelay;
+          <div key={lineIndex}>
+            {words.map((word, wordIndex) => {
               return (
-                <span
-                  key={`${lineIndex}-${charIndex}`}
-                  className="inline-block transition-all"
-                  style={{
-                    opacity: started ? 1 : 0,
-                    transform: started ? 'translateX(0)' : 'translateX(-18px)',
-                    transitionDuration: '500ms',
-                    transitionDelay: `${stagger}ms`,
-                    transitionProperty: 'opacity, transform',
-                    transitionTimingFunction: 'ease-out',
-                  }}
-                >
-                  {char === ' ' ? '\u00A0' : char}
+                // Wrap each word in whitespace-nowrap so words never split mid-character
+                <span key={wordIndex} className="inline-block whitespace-nowrap">
+                  {word.split('').map((char) => {
+                    const stagger = globalCharIndex * charDelay;
+                    globalCharIndex++;
+                    return (
+                      <span
+                        key={globalCharIndex}
+                        className="inline-block transition-all"
+                        style={{
+                          opacity: started ? 1 : 0,
+                          transform: started ? 'translateX(0)' : 'translateX(-18px)',
+                          transitionDuration: '500ms',
+                          transitionDelay: `${stagger}ms`,
+                          transitionProperty: 'opacity, transform',
+                          transitionTimingFunction: 'ease-out',
+                        }}
+                      >
+                        {char}
+                      </span>
+                    );
+                  })}
+                  {/* Space between words (also animated) */}
+                  {wordIndex < words.length - 1 && (
+                    <span
+                      className="inline-block transition-all"
+                      style={{
+                        opacity: started ? 1 : 0,
+                        transitionDuration: '500ms',
+                        transitionDelay: `${globalCharIndex * charDelay}ms`,
+                      }}
+                    >
+                      &nbsp;
+                    </span>
+                  )}
                 </span>
               );
             })}
