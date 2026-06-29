@@ -65,9 +65,9 @@ export default function HomePage() {
           {/* Left Column */}
           <div>
             <AnimatedHeading
-              text="Industrial Solutions\nfor Bangladesh"
-              className="text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-bold leading-tight text-white mb-6"
-              charDelay={25}
+              text={"Industrial Solutions\nfor Bangladesh"}
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-bold leading-tight text-white mb-6"
+              charDelay={22}
             />
             <FadeIn delay={800} duration={1000}>
               <p className="text-base md:text-lg text-gray-300 mb-8 max-w-xl leading-relaxed">
